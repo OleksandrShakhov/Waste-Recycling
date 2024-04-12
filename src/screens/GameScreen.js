@@ -1,35 +1,31 @@
-// src/screens/GameScreen.js
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
+import { Audio } from 'expo-av';
 
-const GameScreen = ({ navigation }) => {
+const GameScreen = ({ navigation, route }) => {
     const [score, setScore] = useState(0);
-    const [time, setTime] = useState(60); // Game duration in seconds
-    const [playerName, setPlayerName] = useState('');
-    const [garbageItem, setGarbageItem] = useState(''); // Current garbage item
+    const [time, setTime] = useState(5); // Game duration in seconds
+    const [garbageItem, setGarbageItem] = useState('Clay'); // Current garbage item
+    const [correctSound, setCorrectSound] = useState(null);
+    const [wrongSound, setWrongSound] = useState(null);
+    const [gameEnded, setGameEnded] = useState(false);
+    const playerName = route.params.playerName || '';
 
-    useEffect(() => {
-        const timer = setInterval(() => {
-            if (time > 0) {
-                setTime(prevTime => prevTime - 1);
-            } else {
-                // Game over, navigate to result screen
-                navigation.navigate('ResultScreen', { score, playerName });
-                clearInterval(timer);
-            }
-        }, 1000);
+    const loadSounds = async () => {
+        const correctSoundObject = new Audio.Sound();
+        const wrongSoundObject = new Audio.Sound();
 
-        return () => clearInterval(timer);
-    }, [time]);
+        try {
+            await correctSoundObject.loadAsync(require('../../assets/correct.wav'));
+            await wrongSoundObject.loadAsync(require('../../assets/wrong.wav'));
+            setCorrectSound(correctSoundObject);
+            setWrongSound(wrongSoundObject);
+        } catch (error) {
+            console.error('Failed to load sounds', error);
+        }
+    };
 
-    useEffect(() => {
-        // Generate random garbage item
-        const garbageItems = ['Paper bags', 'Plastic bottles', 'Fruits', 'Plastic bags', 'Glass bottles', 'Newspapers', 'Cardboard boxes', 'Aluminum cans', 'Batteries', 'Clay', 'Cleaning wipes', 'Coffee filters (paper)', 'Food and food scraps', 'Pet food'];
-        const randomIndex = Math.floor(Math.random() * garbageItems.length);
-        setGarbageItem(garbageItems[randomIndex]);
-    }, []);
-
-    const handleBinPress = (binIndex) => {
+    const handleBinPress = async (binIndex) => {
         let newScore = score;
         let correctBin = '';
 
@@ -58,20 +54,68 @@ const GameScreen = ({ navigation }) => {
                 break;
         }
 
-        if ((correctBin === 'blue' && binIndex === 0) ||
-            (correctBin === 'green' && binIndex === 1) ||
-            (correctBin === 'black' && binIndex === 2)) {
-            newScore += 1; // Correct bin, increase score
-        } else {
-            newScore -= 2; // Incorrect bin, decrease score
+        try {
+            if ((correctBin === 'blue' && binIndex === 0) ||
+                (correctBin === 'green' && binIndex === 1) ||
+                (correctBin === 'black' && binIndex === 2)) {
+                newScore += 1; // Correct bin, increase score
+                if (correctSound) {
+                    await correctSound.replayAsync();
+                }
+            } else {
+                newScore -= 2; // Incorrect bin, decrease score
+                if (wrongSound) {
+                    await wrongSound.replayAsync();
+                }
+            }
+        } catch (error) {
+            console.error('Failed to play sound', error);
         }
+
         setScore(newScore);
 
         // Generate new garbage item
-        const newGarbageItems = ['Paper bags', 'Plastic bottles', 'Fruits', 'Plastic bags', 'Glass bottles', 'Newspapers', 'Cardboard boxes', 'Aluminum cans', 'Batteries', 'Clay', 'Cleaning wipes', 'Coffee filters (paper)', 'Food and food scraps', 'Pet food'];
-        const randomIndex = Math.floor(Math.random() * newGarbageItems.length);
-        setGarbageItem(newGarbageItems[randomIndex]);
+        const garbageItems = ['Paper bags', 'Plastic bottles', 'Fruits', 'Plastic bags', 'Glass bottles', 'Newspapers', 'Cardboard boxes', 'Aluminum cans', 'Batteries', 'Clay', 'Cleaning wipes', 'Coffee filters (paper)', 'Food and food scraps', 'Pet food'];
+        const randomIndex = Math.floor(Math.random() * garbageItems.length);
+        setGarbageItem(garbageItems[randomIndex]);
     };
+
+    // Load sounds when the component mounts
+    useEffect(() => {
+        loadSounds();
+        return () => {
+            // Unload sounds when the component unmounts
+            if (correctSound) {
+                correctSound.unloadAsync();
+            }
+            if (wrongSound) {
+                wrongSound.unloadAsync();
+            }
+        };
+    }, []);
+
+    // Update time every second
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setTime(prevTime => {
+                if (prevTime === 1) {
+                    clearInterval(timer);
+                    setGameEnded(true); // Set the gameEnded flag to true
+                }
+                return prevTime - 1;
+            });
+        }, 1000);
+
+        // Cleanup function
+        return () => clearInterval(timer);
+    }, []);
+
+    // Navigate to ResultScreen if the game has ended
+    useEffect(() => {
+        if (gameEnded) {
+            navigation.navigate('ResultScreen', { score: score, playerName: playerName });
+        }
+    }, [gameEnded, navigation, score, playerName]);
 
     return (
         <View style={styles.container}>
