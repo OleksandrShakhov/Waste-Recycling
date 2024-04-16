@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, Pressable, Image } from 'react-native';
 import { Audio } from 'expo-av';
+import { insertResult } from '../../database';
 
 const GameScreen = ({ navigation, route }) => {
     const [score, setScore] = useState(0);
-    const [time, setTime] = useState(5); // Game duration in seconds
-    const [garbageItem, setGarbageItem] = useState('Clay'); // Current garbage item
+    const [time, setTime] = useState(5);
+    const [garbageItem, setGarbageItem] = useState('Clay');
     const [correctSound, setCorrectSound] = useState(null);
     const [wrongSound, setWrongSound] = useState(null);
-    const [gameEnded, setGameEnded] = useState(false);
-    const playerName = route.params.playerName || '';
+    const [playerName, setPlayerName] = useState('');
 
     const loadSounds = async () => {
         const correctSoundObject = new Audio.Sound();
@@ -58,12 +58,12 @@ const GameScreen = ({ navigation, route }) => {
             if ((correctBin === 'blue' && binIndex === 0) ||
                 (correctBin === 'green' && binIndex === 1) ||
                 (correctBin === 'black' && binIndex === 2)) {
-                newScore += 1; // Correct bin, increase score
+                newScore += 1;
                 if (correctSound) {
                     await correctSound.replayAsync();
                 }
             } else {
-                newScore -= 2; // Incorrect bin, decrease score
+                newScore -= 2;
                 if (wrongSound) {
                     await wrongSound.replayAsync();
                 }
@@ -74,59 +74,58 @@ const GameScreen = ({ navigation, route }) => {
 
         setScore(newScore);
 
-        // Generate new garbage item
         const garbageItems = ['Paper bags', 'Plastic bottles', 'Fruits', 'Plastic bags', 'Glass bottles', 'Newspapers', 'Cardboard boxes', 'Aluminum cans', 'Batteries', 'Clay', 'Cleaning wipes', 'Coffee filters (paper)', 'Food and food scraps', 'Pet food'];
         const randomIndex = Math.floor(Math.random() * garbageItems.length);
         setGarbageItem(garbageItems[randomIndex]);
     };
 
-    // Load sounds when the component mounts
-    useEffect(() => {
+    const resetGame = useCallback(() => {
+        setScore(0);
+        setTime(5);
+        setGarbageItem('Clay');
         loadSounds();
-        return () => {
-            // Unload sounds when the component unmounts
-            if (correctSound) {
-                correctSound.unloadAsync();
-            }
-            if (wrongSound) {
-                wrongSound.unloadAsync();
-            }
-        };
     }, []);
 
-    // Update time every second
+    useEffect(() => {
+        loadSounds();
+        setPlayerName(route.params?.playerName || '');
+    }, [route.params?.playerName]);
+
     useEffect(() => {
         const timer = setInterval(() => {
             setTime(prevTime => {
                 if (prevTime === 1) {
-                    clearInterval(timer);
-                    setGameEnded(true); // Set the gameEnded flag to true
+                    // Save result to database when time reaches 1
+                    insertResult(playerName, score)
+                        .then(() => {
+                            navigation.navigate('ResultScreen', { score, playerName });
+                        })
+                        .catch(error => {
+                            console.error('Failed to save result to database', error);
+                        });
                 }
                 return prevTime - 1;
             });
         }, 1000);
 
-        // Cleanup function
         return () => clearInterval(timer);
-    }, []);
+    }, [navigation, playerName, score]);
 
-    // Navigate to ResultScreen if the game has ended
     useEffect(() => {
-        if (gameEnded) {
-            navigation.navigate('ResultScreen', { score: score, playerName: playerName });
-        }
-    }, [gameEnded, navigation, score, playerName]);
+        const unsubscribe = navigation.addListener('focus', () => {
+            resetGame();
+        });
+
+        return unsubscribe;
+    }, [navigation, resetGame]);
 
     return (
         <View style={styles.container}>
-            {/* Display player, score, and time horizontally */}
             <View style={styles.playerInfoContainer}>
                 <Text style={styles.infoText}>Player: {playerName}</Text>
                 <Text style={styles.infoText}>Score: {score}</Text>
                 <Text style={styles.infoText}>Time: {time}</Text>
             </View>
-
-            {/* Display bins */}
             <View style={styles.binsContainer}>
                 <Pressable style={styles.bin} onPress={() => handleBinPress(0)}>
                     <Image source={require('../../assets/blue_bin.png')} style={styles.binImage} />
@@ -138,8 +137,6 @@ const GameScreen = ({ navigation, route }) => {
                     <Image source={require('../../assets/black_bin.png')} style={styles.binImage} />
                 </Pressable>
             </View>
-
-            {/* Display garbage item */}
             <View style={styles.garbageItem}>
                 <Text>{garbageItem}</Text>
             </View>

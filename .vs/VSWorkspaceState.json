@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
-    "\\assets"
+    "\\assets",
+    "\\src",
+    "\\src\\screens"
   ],
-  "SelectedNode": "\\src",
+  "SelectedNode": "\\src\\screens\\GameScreen.js",
   "PreviewInSolutionExplorer": false
 }
