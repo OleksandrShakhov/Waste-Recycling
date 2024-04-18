@@ -5,7 +5,7 @@ import { insertResult } from '../../database';
 
 const GameScreen = ({ navigation, route }) => {
     const [score, setScore] = useState(0);
-    const [time, setTime] = useState(5);
+    const [time, setTime] = useState(30); 
     const [garbageItem, setGarbageItem] = useState('Clay');
     const [correctSound, setCorrectSound] = useState(null);
     const [wrongSound, setWrongSound] = useState(null);
@@ -81,7 +81,7 @@ const GameScreen = ({ navigation, route }) => {
 
     const resetGame = useCallback(() => {
         setScore(0);
-        setTime(5);
+        setTime(30); 
         setGarbageItem('Clay');
         loadSounds();
     }, []);
@@ -149,6 +149,7 @@ const styles = StyleSheet.create({
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: '#f5f5f5',
     },
     playerInfoContainer: {
         flexDirection: 'row',
@@ -156,6 +157,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         width: '100%',
         marginBottom: 20,
+        backgroundColor: '#fff',
+        padding: 10,
+        borderRadius: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     binsContainer: {
         flexDirection: 'row',
@@ -165,27 +177,44 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     bin: {
-        width: 100,
-        height: 100,
-        backgroundColor: 'gray',
+        width: 120,
+        height: 120,
+        backgroundColor: '#fff',
         alignItems: 'center',
         justifyContent: 'center',
-        borderRadius: 10,
-        margin: 5,
+        borderRadius: 15,
+        margin: 10,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     binImage: {
-        width: 80,
-        height: 80,
+        width: 100,
+        height: 100,
         resizeMode: 'contain',
     },
     garbageItem: {
-        backgroundColor: 'gray',
-        padding: 10,
+        backgroundColor: '#fff',
+        padding: 15,
         borderRadius: 10,
         marginBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: {
+            width: 0,
+            height: 2,
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 3.84,
+        elevation: 5,
     },
     infoText: {
         fontSize: 18,
+        color: '#333',
     },
 });
 

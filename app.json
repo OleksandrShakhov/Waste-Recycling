@@ -4,10 +4,10 @@
     "slug": "helloWorld",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/logo.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -15,16 +15,26 @@
       "**/*"
     ],
     "ios": {
+      "icon": "./assets/logo.png",
+      "buildNumber": "1.0.0",
+      "bundleIdentifier": "com.oleksandrshakhoov.WandR",
       "supportsTablet": true
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.oleksandrshakhoov.WandR",
+      "versionCode": 1000
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "00541525-759f-481e-b5e1-ebedfe743c73"
+      }
     }
   }
 }

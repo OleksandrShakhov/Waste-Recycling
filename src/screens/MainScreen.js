@@ -1,6 +1,5 @@
-// src/screens/MainScreen.js
 import React, { useState } from 'react';
-import { View, Text, Button, Modal, TextInput, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Modal, TextInput, StyleSheet, Image } from 'react-native';
 
 const MainScreen = ({ navigation }) => {
     const [modalVisible, setModalVisible] = useState(false);
@@ -16,9 +15,21 @@ const MainScreen = ({ navigation }) => {
     };
 
     return (
-        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-            <Text>Recycling Game</Text>
-            <Button title="Start Game" onPress={() => setModalVisible(true)} />
+        <View style={styles.container}>
+            
+            <Image source={require('../../assets/logo.png')} style={styles.logo} />
+
+            <Text style={styles.title}>Recycling Game</Text>
+
+            {/* Description button */}
+            <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('DescriptionScreen')}>
+                <Text style={styles.buttonText}>How to Play</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
+                <Text style={styles.buttonText}>Start Game</Text>
+            </TouchableOpacity>
+
             <Modal
                 animationType="slide"
                 transparent={true}
@@ -34,7 +45,9 @@ const MainScreen = ({ navigation }) => {
                             value={playerName}
                             onChangeText={text => setPlayerName(text)}
                         />
-                        <Button title="Submit" onPress={startGame} />
+                        <TouchableOpacity style={styles.modalButton} onPress={startGame}>
+                            <Text style={styles.modalButtonText}>Submit</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
             </Modal>
@@ -43,6 +56,35 @@ const MainScreen = ({ navigation }) => {
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    logo: {
+        width: 200,
+        height: 200,
+        resizeMode: 'contain',
+        marginBottom: 20,
+    },
+    title: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        marginBottom: 20,
+    },
+    button: {
+        backgroundColor: '#007bff',
+        padding: 15,
+        borderRadius: 10,
+        marginBottom: 10,
+        width: 200,
+        alignItems: 'center',
+    },
+    buttonText: {
+        color: '#ffffff',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
     modalContainer: {
         flex: 1,
         justifyContent: 'center',
@@ -66,6 +108,19 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         paddingHorizontal: 10,
         borderRadius: 5,
+        width: 200,
+    },
+    modalButton: {
+        backgroundColor: '#007bff',
+        padding: 15,
+        borderRadius: 10,
+        width: 200,
+        alignItems: 'center',
+    },
+    modalButtonText: {
+        color: '#ffffff',
+        fontSize: 18,
+        fontWeight: 'bold',
     },
 });
 
