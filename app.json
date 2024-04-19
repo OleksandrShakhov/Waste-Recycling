@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "helloWorld",
-    "slug": "helloWorld",
-    "version": "1.0.0",
+    "name": "Waste and Recycle App",
+    "slug": "WasteRecycleApp",
+    "version": "1.0.2",
     "orientation": "portrait",
     "icon": "./assets/logo.png",
     "userInterfaceStyle": "light",
@@ -16,8 +16,8 @@
     ],
     "ios": {
       "icon": "./assets/logo.png",
-      "buildNumber": "1.0.0",
-      "bundleIdentifier": "com.oleksandrshakhoov.WandR",
+      "buildNumber": "1.0.2",
+      "bundleIdentifier": "ca.oleksandrshakhov.WandR",
       "supportsTablet": true
     },
     "android": {
@@ -25,15 +25,15 @@
         "foregroundImage": "./assets/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.oleksandrshakhoov.WandR",
-      "versionCode": 1000
+      "package": "ca.oleksandrshakhov.WandR",
+      "versionCode": 102
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "00541525-759f-481e-b5e1-ebedfe743c73"
+        "projectId": "ec4ea7b3-4cf1-44c6-9f8b-c9b4e2c317b6"
       }
     }
   }

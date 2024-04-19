@@ -2,13 +2,16 @@ import React, { useEffect } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { setupDatabase } from './database';
-
+import * as SplashScreen from 'expo-splash-screen';
 // Screens
 import MainScreen from './src/screens/MainScreen';
 import GameScreen from './src/screens/GameScreen';
 import ResultScreen from './src/screens/ResultScreen';
 import AllResultsScreen from './src/screens/AllResultsScreen';
 import DescriptionScreen from './src/screens/DescriptionScreen';
+
+SplashScreen.preventAutoHideAsync();
+setTimeout(SplashScreen.hideAsync, 4000);
 
 const Stack = createStackNavigator();
 
