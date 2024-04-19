@@ -29,6 +29,23 @@ Data Persistence
 
 The application uses a database to store game results. Ensure you have set up the database correctly and update the database configuration in the application code as needed.
 
+# Dependencies
+
+- **@react-native-community/viewpager**
+- **@react-native-community/viewpager**
+- **@react-navigation/stack**
+- **expo**
+- **expo-av**
+- **expo-sqlite**
+- **expo-status-bar**
+- **react**
+- **react-native**
+- **react-native-gesture-handler**
+- **react-native-reanimated**
+- **react-native-safe-area-context**
+- **react-native-screens**
+- **expo-splash-screen**
+
 # Usage
 
 Main Screen
